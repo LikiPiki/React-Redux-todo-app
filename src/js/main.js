@@ -8,6 +8,8 @@ import App from './components/App.js';
 // import Element from './components/Element.js';
 
 
+import "../scss/main.scss";
+
 const inittialState = {
 	'hello': true,
 	todos: [

@@ -25,10 +25,11 @@ class Element extends Component {
 
 	render() {
 		return (
-			<div>
+			<li>
+				<div className="complete-button"></div>
 				{this.props.content.checked == false ? this.props.content.name: "DELETED"}
-				<button onClick={this.delete}>remove</button>
-			</div>
+				<div onClick={this.delete} className="remove-button"></div>
+			</li>
 		);
 	}
 }

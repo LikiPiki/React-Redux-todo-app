@@ -40,7 +40,7 @@ module.exports = {
 					options: {minimize: true}
 				}],
 			}, {
-				test: /\.(woff2?|ttf|eot|svg)$/,
+				test: /\.(woff2?|ttf|eot|svg|png)$/,
 				loader: 'url-loader?limit=10000'
 			}
 		]

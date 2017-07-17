@@ -11,26 +11,38 @@ import Element from './Element.js'
 class App extends Component {
 	constructor(props) {
 		super(props);
+
 		this.addnew = this.addnew.bind(this);
+		this.enterPress = this.enterPress.bind(this);
+	}
+
+	enterPress(event) {
+		if (event.which == 13) {
+			this.addnew();
+		}
 	}
 
 	addnew(event) {
-		console.log(this.refs.input.value);
-		this.props.actions.action(this.refs.input.value);
+		if (this.refs.input.value) {
+			this.props.actions.action(this.refs.input.value);
+			this.refs.input.value = '';
+		}
 	}
 
 	render() {
 		return (
 			<div>
-				<h1>Header here</h1>
-				<input type="text" ref="input"/>
-				<button onClick={this.addnew}>Add new</button>
-				<div>
-				{this.props.todos.map(item => 
-					<Element key={item.id} content={item}/>
-				)}
-					
+				<div className="header">
+					<div className="content">
+						<input type="text" onKeyPress={this.enterPress} ref="input"/>
+						<button onClick={this.addnew}>+</button>
+					</div>
 				</div>
+				<ul className="todo">
+					{this.props.todos.map(item => 
+						<Element key={item.id} content={item}/>
+					)}
+				</ul>
 			</div>
 		)
 	}
