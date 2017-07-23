@@ -7,6 +7,11 @@ import * as actions from '../actions.js';
 
 import Element from './Element.js'
 
+let xhr = new XMLHttpRequest();
+xhr.open("POST", '/add_new', true);
+
+// xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
 
 class App extends Component {
 	constructor(props) {
@@ -40,7 +45,7 @@ class App extends Component {
 				</div>
 				<ul className="todo">
 					{this.props.todos.map(item => 
-						<Element key={item.id} content={item}/>
+						<Element key={item.todo_id} content={item}/>
 					)}
 				</ul>
 			</div>

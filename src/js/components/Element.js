@@ -12,9 +12,6 @@ class Element extends Component {
 		this.delete = this.delete.bind(this);
 	}
 
-	componentWillReciveProps (props){
-		this.setState({data: props});
-	}
 
 	delete(event) {
 		console.log(this.props.content.id);

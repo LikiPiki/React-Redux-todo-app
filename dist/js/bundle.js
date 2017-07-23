@@ -11312,6 +11312,12 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var xhr = new XMLHttpRequest();
+xhr.open("POST", '/add_new', true);
+
+// xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+
 var App = function (_Component) {
 	_inherits(App, _Component);
 
@@ -11364,7 +11370,7 @@ var App = function (_Component) {
 					'ul',
 					{ className: 'todo' },
 					this.props.todos.map(function (item) {
-						return _react2.default.createElement(_Element2.default, { key: item.id, content: item });
+						return _react2.default.createElement(_Element2.default, { key: item.todo_id, content: item });
 					})
 				)
 			);
@@ -11472,11 +11478,6 @@ var Element = function (_Component) {
 	}
 
 	_createClass(Element, [{
-		key: 'componentWillReciveProps',
-		value: function componentWillReciveProps(props) {
-			this.setState({ data: props });
-		}
-	}, {
 		key: 'delete',
 		value: function _delete(event) {
 			console.log(this.props.content.id);
@@ -11520,8 +11521,6 @@ exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(
 
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-// import Element from './components/Element.js';
-
 
 var _react = __webpack_require__(20);
 
@@ -11547,12 +11546,24 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 var inittialState = {
 	'hello': true,
-	todos: [{
-		name: 'kek',
-		checked: false,
-		id: 0
-	}]
+	todos: []
 };
+
+var data = void 0;
+
+var xhrGet = new XMLHttpRequest();
+xhrGet.open('GET', 'get_all', false);
+xhrGet.send();
+
+if (xhrGet.status != 200) {
+	console.log(xhrGet.status + ': ' + xhrGet.statusText);
+} else {
+	data = JSON.parse(xhrGet.responseText);
+}
+inittialState.todos = data;
+
+// TODO: реализовать удаление по id елемента!!!
+
 
 var reducer = function reducer() {
 	var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : inittialState;
@@ -11561,6 +11572,14 @@ var reducer = function reducer() {
 	switch (action.type) {
 		case 'ADD':
 			{
+				var xhrPost = new XMLHttpRequest();
+				xhrPost.open('POST', 'add_new', true); // });
+				var _data = {
+					"name": action.payload.name
+				};
+				console.log(_data);
+				xhrPost.send(JSON.stringify(_data));
+
 				console.log('addded', action.payload.name);
 				return _extends({}, state, {
 					todos: [].concat(_toConsumableArray(state.todos), [{
