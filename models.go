@@ -1,11 +1,12 @@
 package main
 
-type Todo struct {
-	Name    string `json:"name"`
-	Checked bool   `json:"checked"`
-	Todo_id int64  `json:"todo_id"`
-}
+import (
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
+)
 
-type Resp struct {
-	Name string
+type Todo struct {
+	gorm.Model
+	Name    string
+	Checked bool
 }
