@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
@@ -41,6 +40,9 @@ func main() {
 	router.HandleFunc("/delete_todo", deleteTodo).Path("POST")
 	router.HandleFunc("is_checked_todo", complitedTodo).Path("POST")
 	router.HandleFunc("edit_todo", editTodo).Path("POST")
+
+	http.Handle("/", router)
+	http.ListenAndServe(PORT_ADDR, nil)
 }
 
 func handleFuncMain(w http.ResponseWriter, r *http.Request) {
@@ -57,6 +59,7 @@ func showTodo(w http.ResponseWriter, r *http.Request) {
 
 func addTodo(w http.ResponseWriter, r *http.Request) {
 	// Add todo to db
+	var err error
 	if err != nil { // Error which can appeared when todo is added
 		fmt.Fprintln(w, "error")
 	} else {
@@ -66,6 +69,7 @@ func addTodo(w http.ResponseWriter, r *http.Request) {
 
 func deleteTodo(w http.ResponseWriter, r *http.Request) {
 	// Delete todo from db
+	var err error
 	if err != nil { // Error which can appeared when todo is deleted
 		fmt.Fprintln(w, "error")
 	} else {
@@ -75,6 +79,7 @@ func deleteTodo(w http.ResponseWriter, r *http.Request) {
 
 func complitedTodo(w http.ResponseWriter, r *http.Request) {
 	// Checked todo
+	var err error
 	if err != nil { // Error which can appeared when todo is complited
 		fmt.Fprintln(w, "error")
 	} else {
@@ -84,6 +89,7 @@ func complitedTodo(w http.ResponseWriter, r *http.Request) {
 
 func editTodo(w http.ResponseWriter, r *http.Request) {
 	// Edit todo to db
+	var err error
 	if err != nil { // Error which can appeared when todo is edited
 		fmt.Fprintln(w, "error")
 	} else {
