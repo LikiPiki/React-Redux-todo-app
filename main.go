@@ -37,7 +37,6 @@ func main() {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", handleFuncMain)
 	router.HandleFunc("/all_todos", getAllTodos)
-	router.HandleFunc("/show_todo", showTodo)
 	router.HandleFunc("/add_todo", addTodo)
 	router.HandleFunc("/delete_todo", deleteTodo)
 	router.HandleFunc("is_checked_todo", complitedTodo)
@@ -53,7 +52,6 @@ func handleFuncMain(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, `
         / - main
         /all_todos
-        /show_todo
         /add_todo
         /delete_todo
         /is_checked_todo
@@ -63,11 +61,7 @@ func handleFuncMain(w http.ResponseWriter, r *http.Request) {
 func getAllTodos(w http.ResponseWriter, r *http.Request) {
 	var todos []Todo
 	db.Find(&todos)
-	fmt.Fprintln(w)
-}
-
-func showTodo(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Something")
+	fmt.Fprintln(w, todos)
 }
 
 func addTodo(w http.ResponseWriter, r *http.Request) {
