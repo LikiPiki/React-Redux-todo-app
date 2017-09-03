@@ -11,7 +11,8 @@ module.exports = {
 		aggregateTimeout: 100
 	},
 	devtool: 'source-map',
-	watch: true,
+	// change this value if u need develop react project but not build
+	// watch: true,
 	module: {
 		loaders: [
 			{
