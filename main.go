@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -21,46 +22,52 @@ var (
 func init() {
 	var err error
 	db, err = gorm.Open("sqlite3", "test.db")
+	db.LogMode(true)
 	if err != nil {
 		panic("failed to connect database")
 	}
-	defer db.Close()
-
 	db.AutoMigrate(
 		&Todo{},
 	)
 }
 
 func main() {
-	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/", handleFuncMain).Path("GET")
-	router.HandleFunc("/all_todos", getAllTodos).Path("GET")
-	router.HandleFunc("/show_todo", showTodo).Path("GET")
-	router.HandleFunc("/add_todo", addTodo).Path("POST")
-	router.HandleFunc("/delete_todo", deleteTodo).Path("POST")
-	router.HandleFunc("is_checked_todo", complitedTodo).Path("POST")
-	router.HandleFunc("edit_todo", editTodo).Path("POST")
+	defer db.Close()
 
-	http.Handle("/", router)
-	http.ListenAndServe(PORT_ADDR, nil)
+	router := mux.NewRouter().StrictSlash(true)
+	router.HandleFunc("/", handleFuncMain)
+	router.HandleFunc("/all_todos", getAllTodos)
+	router.HandleFunc("/add_todo", addTodo)
+	router.HandleFunc("/delete_todo", deleteTodo)
+	router.HandleFunc("is_checked_todo", complitedTodo)
+	router.HandleFunc("edit_todo", editTodo)
+	fmt.Println("Starting server on port", PORT_ADDR)
+	err := http.ListenAndServe(PORT_ADDR, router)
+	if err != nil {
+		log.Println("Cant start the server")
+	}
 }
 
 func handleFuncMain(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w /*Main*/)
+	fmt.Fprintf(w, `
+        / - main
+        /all_todos
+        /add_todo
+        /delete_todo
+        /is_checked_todo
+        /edit_todo`)
 }
 
 func getAllTodos(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w /*JSON witch have all todos*/)
-}
-
-func showTodo(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w /*JSON witch have only one todo*/)
+	var todos []Todo
+	db.Find(&todos)
+	fmt.Fprintln(w, todos)
 }
 
 func addTodo(w http.ResponseWriter, r *http.Request) {
-	// Add todo to db
-	var err error
-	if err != nil { // Error which can appeared when todo is added
+	todo, err := getTodoFromRequest(r)
+	db.Create(&Todo{Name: todo.Name, Checked: todo.Checked})
+	if err != nil {
 		fmt.Fprintln(w, "error")
 	} else {
 		fmt.Fprintln(w, "ok")
@@ -68,9 +75,9 @@ func addTodo(w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteTodo(w http.ResponseWriter, r *http.Request) {
-	// Delete todo from db
-	var err error
-	if err != nil { // Error which can appeared when todo is deleted
+	todo, err := getTodoFromRequest(r)
+	db.Delete(&todo)
+	if err != nil {
 		fmt.Fprintln(w, "error")
 	} else {
 		fmt.Fprintln(w, "ok")
@@ -78,9 +85,9 @@ func deleteTodo(w http.ResponseWriter, r *http.Request) {
 }
 
 func complitedTodo(w http.ResponseWriter, r *http.Request) {
-	// Checked todo
-	var err error
-	if err != nil { // Error which can appeared when todo is complited
+	todo, err := getTodoFromRequest(r)
+	db.Model(&todo).Update("Checked", todo.Checked)
+	if err != nil {
 		fmt.Fprintln(w, "error")
 	} else {
 		fmt.Fprintln(w, "ok")
@@ -88,11 +95,16 @@ func complitedTodo(w http.ResponseWriter, r *http.Request) {
 }
 
 func editTodo(w http.ResponseWriter, r *http.Request) {
-	// Edit todo to db
-	var err error
-	if err != nil { // Error which can appeared when todo is edited
+	todo, err := getTodoFromRequest(r)
+	db.Save(&todo)
+	if err != nil {
 		fmt.Fprintln(w, "error")
 	} else {
 		fmt.Fprintln(w, "ok")
 	}
+}
+
+func getTodoFromRequest(r *http.Request) (Todo, error) {
+	todo := new(Todo)
+	return *todo, nil
 }
