@@ -5,7 +5,7 @@ module.exports = {
 		'bundle': './src/js/main.js',
 	},
 	output: {
-		filename: 'dist/js/[name].js'
+		filename: 'dist/[name].js'
 	},
 	watchOptions: {
 		aggregateTimeout: 100
